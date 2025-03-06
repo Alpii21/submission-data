@@ -9,7 +9,7 @@ st.image("https://github.com/dicodingacademy/assets/raw/main/logo.png")
 st.header('Dicoding Collection Dashboard :sparkles:')
 
 # Membaca File CSV
-orders_df = pd.read_csv("https://raw.githubusercontent.com/Alpii21/submission-data/main/data/orders_dataset.csv")
+order_items_dataset_df = pd.read_csv("https://raw.githubusercontent.com/Alpii21/submission-data/main/data/orders_dataset.csv")
 payments_df = pd.read_csv("https://raw.githubusercontent.com/Alpii21/submission-data/main/data/order_payments_dataset.csv")
 customers_df = pd.read_csv("https://raw.githubusercontent.com/Alpii21/submission-data/main/data/customers_dataset.csv")
 
