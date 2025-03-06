@@ -12,88 +12,105 @@ st.header('Dicoding Collection Dashboard :sparkles:')
 
 st.title("Dashboard Analisis Data Pelanggan & Produk")
 
-# Membaca File CSV
-customers_df = pd.read_csv("https://github.com/Alpii21/submission-data/blob/main/data/customers_dataset.csv")
-gelocation_df = pd.read_csv("https://github.com/Alpii21/submission-data/blob/main/data/geolocation_dataset.csv")
-orders_items_df = pd.read_csv("https://github.com/Alpii21/submission-data/blob/main/data/orders_dataset.csv")
-orders_payments_df = pd.read_csv("https://github.com/Alpii21/submission-data/blob/main/data/order_payments_dataset.csv")
-orders_reviews_df = pd.read_csv("https://github.com/Alpii21/submission-data/blob/main/data/order_reviews_dataset.csv")
-orders_df = pd.read_csv("https://github.com/Alpii21/submission-data/blob/main/data/orders_dataset.csv")
-product_category_df = pd.read_csv("https://github.com/Alpii21/submission-data/blob/main/data/product_category_name_translation.csv")
-products_df = pd.read_csv("https://github.com/Alpii21/submission-data/blob/main/data/products_dataset.csv")
-sellers_df = pd.read_csv("https://github.com/Alpii21/submission-data/blob/main/data/sellers_dataset.csv")
-
-
-# Simulasi data pelanggan
-df_pelanggan = pd.DataFrame({
+# Simulasi data pelanggan (Contoh dataset)
+data_pelanggan = {
     'order_id': range(1, 501),
-    'review_score': np.random.randint(1, 6, 500),
-    'delivery_time_days': np.random.randint(1, 15, 500),
+    'review_score': np.random.randint(1, 6, 500),  # Skala 1-5
+    'delivery_time_days': np.random.randint(1, 15, 500),  # Lama pengiriman dalam hari
     'order_date': pd.date_range(start='2023-06-01', periods=500, freq='D')
-})
-df_pelanggan['order_month'] = df_pelanggan['order_date'].dt.to_period('M')
+}
+df_pelanggan = pd.DataFrame(data_pelanggan)
 
-# Simulasi data produk
-df_produk = pd.DataFrame({
+# Simulasi data produk (Contoh dataset)
+data_produk = {
     'product_id': range(1, 101),
     'category': ['A', 'B', 'C', 'D'] * 25,
-    'price': np.random.uniform(10, 500, 100).round(2),
-    'sales': np.random.randint(50, 500, 100),
+    'price': [round(x, 2) for x in list(np.random.uniform(10, 500, 100))],
+    'sales': [np.random.randint(50, 500) for _ in range(100)],
     'month': ['Jan', 'Feb', 'Mar'] * 33 + ['Jan']
-})
+}
+df_produk = pd.DataFrame(data_produk)
 
-# Tab untuk analisis data pelanggan dan produk
-tab1, tab2 = st.tabs(["Analisis Pelanggan", "Analisis Produk"])
+# Judul Dashboard
+st.title("Dashboard Analisis Pelanggan dan Produk")
 
-with tab1:
-    st.subheader("Statistik Deskriptif Pelanggan")
-    st.write(df_pelanggan.describe())
-    
-    st.subheader("Distribusi Review Score")
-    fig, ax = plt.subplots()
-    sns.countplot(x='review_score', data=df_pelanggan, palette='coolwarm', ax=ax)
-    st.pyplot(fig)
-    
-    st.subheader("Tren Rata-rata Review Score per Bulan")
-    monthly_review = df_pelanggan.groupby('order_month')['review_score'].mean()
-    fig, ax = plt.subplots()
-    monthly_review.plot(marker='o', color='b', ax=ax)
-    ax.set_xlabel("Bulan")
-    ax.set_ylabel("Rata-rata Review Score")
-    st.pyplot(fig)
-    
-    st.subheader("Hubungan Waktu Pengiriman vs Review Score")
-    fig, ax = plt.subplots()
-    sns.boxplot(x='review_score', y='delivery_time_days', data=df_pelanggan, palette='viridis', ax=ax)
-    st.pyplot(fig)
-    
-    st.subheader("Korelasi antara Review Score dan Waktu Pengiriman")
-    st.write(df_pelanggan[['review_score', 'delivery_time_days']].corr())
+# Bagian Analisis Pelanggan
+st.header("Analisis Pelanggan")
 
-with tab2:
-    st.subheader("Distribusi Harga Produk")
-    fig, ax = plt.subplots()
-    sns.histplot(df_produk['price'], bins=20, kde=True, color='blue', ax=ax)
-    st.pyplot(fig)
-    
-    st.subheader("Tren Penjualan per Kategori Produk")
-    fig, ax = plt.subplots()
-    sns.boxplot(x='category', y='sales', data=df_produk, palette='coolwarm', ax=ax)
-    st.pyplot(fig)
-    
-    st.subheader("Hubungan Harga dengan Penjualan")
-    fig, ax = plt.subplots()
-    sns.scatterplot(x='price', y='sales', data=df_produk, hue='category', palette='viridis', ax=ax)
-    st.pyplot(fig)
-    
-    st.subheader("Pola Pembelian Pelanggan per Bulan")
-    fig, ax = plt.subplots()
-    sns.lineplot(x='month', y='sales', data=df_produk, estimator='sum', marker='o', color='red', ax=ax)
-    st.pyplot(fig)
+# Statistik deskriptif
+st.subheader("Statistik Deskriptif Data Pelanggan")
+st.write(df_pelanggan.describe())
 
-st.write("Dashboard ini dibuat dengan Streamlit untuk analisis data pelanggan dan produk.")
+# Visualisasi distribusi review score
+st.subheader("Distribusi Review Score")
+fig_review, ax_review = plt.subplots(figsize=(8, 5))
+sns.countplot(x='review_score', data=df_pelanggan, hue='review_score', palette='coolwarm', legend=False, ax=ax_review)
+ax_review.set_title('Distribusi Review Score')
+ax_review.set_xlabel('Review Score')
+ax_review.set_ylabel('Jumlah')
+st.pyplot(fig_review)
 
-# # Menampilkan Kesimpulan
-st.subheader("Kesimpulan")
-st.write(f"Conclution pertanyaan 1 : Berdasarkan analisis data review score dan waktu pengiriman pesanan, terdapat hubungan antara kepuasan pelanggan dan kecepatan pengiriman. Untuk meningkatkan tingkat kepuasan pelanggan sebesar 10% dalam 6 bulan ke depan, strategi yang dapat diterapkan meliputi: a. Mempercepat Waktu Pengiriman : Mengurangi keterlambatan dan meningkatkan efisiensi logistik. b. Meningkatkan Kualitas Layanan : Respon cepat terhadap keluhan pelanggan dan peningkatan layanan pelanggan. c. Analisis Umpan Balik Pelanggan : Mengidentifikasi faktor utama yang mempengaruhi review score rendah dan memperbaikinya. d. Optimasi Proses Pemrosesan Pesanan : Menggunakan teknologi atau AI untuk memprediksi dan mempercepat proses pemenuhan pesanan.")
-st.write(f"Conclution pertanyaan 2 : a. Kategori produk dengan harga lebih rendah cenderung memiliki penjualan lebih tinggi. b. Penjualan mengalami tren tertentu setiap bulannya, perlu strategi promo musiman. c. Strategi diskon atau bundle dapat meningkatkan penjualan sebesar 15% dalam 3 bulan ke depan.")
+# Tren rata-rata review score per bulan
+st.subheader("Tren Rata-rata Review Score per Bulan")
+df_pelanggan['order_month'] = df_pelanggan['order_date'].dt.to_period('M')
+monthly_review = df_pelanggan.groupby('order_month')['review_score'].mean()
+fig_tren_review, ax_tren_review = plt.subplots(figsize=(10, 5))
+monthly_review.plot(marker='o', color='b', ax=ax_tren_review)
+ax_tren_review.set_title('Tren Rata-rata Review Score per Bulan')
+ax_tren_review.set_xlabel('Bulan')
+ax_tren_review.set_ylabel('Rata-rata Review Score')
+ax_tren_review.grid()
+st.pyplot(fig_tren_review)
+
+# Hubungan antara waktu pengiriman dan review score
+st.subheader("Waktu Pengiriman vs Review Score")
+fig_delivery_review, ax_delivery_review = plt.subplots(figsize=(8, 5))
+sns.boxplot(x='review_score', y='delivery_time_days', data=df_pelanggan, hue='review_score', palette='viridis', legend=False, ax=ax_delivery_review)
+ax_delivery_review.set_title('Waktu Pengiriman vs Review Score')
+ax_delivery_review.set_xlabel('Review Score')
+ax_delivery_review.set_ylabel('Waktu Pengiriman (hari)')
+st.pyplot(fig_delivery_review)
+
+# Korelasi
+st.subheader("Korelasi antara Review Score dan Waktu Pengiriman")
+correlation = df_pelanggan[['review_score', 'delivery_time_days']].corr()
+st.write(correlation)
+
+# Bagian Analisis Produk
+st.header("Analisis Produk")
+
+# Distribusi Harga Produk
+st.subheader("Distribusi Harga Produk")
+fig_dist_harga, ax_dist_harga = plt.subplots(figsize=(10, 5))
+sns.histplot(df_produk['price'], bins=20, kde=True, color='blue', ax=ax_dist_harga)
+ax_dist_harga.set_title("Distribusi Harga Produk")
+ax_dist_harga.set_xlabel("Harga")
+ax_dist_harga.set_ylabel("Frekuensi")
+st.pyplot(fig_dist_harga)
+
+# Tren Penjualan per Kategori Produk
+st.subheader("Tren Penjualan per Kategori Produk")
+fig_tren_kategori, ax_tren_kategori = plt.subplots(figsize=(12, 6))
+sns.boxplot(x='category', y='sales', data=df_produk, hue='category', palette='coolwarm', legend=False, ax=ax_tren_kategori)
+ax_tren_kategori.set_title("Tren Penjualan per Kategori Produk")
+ax_tren_kategori.set_xlabel("Kategori Produk")
+ax_tren_kategori.set_ylabel("Penjualan")
+st.pyplot(fig_tren_kategori)
+
+# Hubungan Harga dengan Penjualan
+st.subheader("Hubungan Harga dengan Penjualan")
+fig_harga_penjualan, ax_harga_penjualan = plt.subplots(figsize=(10, 5))
+sns.scatterplot(x='price', y='sales', data=df_produk, hue='category', palette='viridis', ax=ax_harga_penjualan)
+ax_harga_penjualan.set_title("Hubungan Harga dengan Penjualan")
+ax_harga_penjualan.set_xlabel("Harga Produk")
+ax_harga_penjualan.set_ylabel("Jumlah Penjualan")
+st.pyplot(fig_harga_penjualan)
+
+# Analisis Tren Pola Pembelian Pelanggan per Bulan
+st.subheader("Pola Pembelian Pelanggan per Bulan")
+fig_pola_pembelian, ax_pola_pembelian = plt.subplots(figsize=(12, 6))
+sns.lineplot(x='month', y='sales', data=df_produk, estimator='sum', errorbar=None, marker='o', color='red', ax=ax_pola_pembelian)
+ax_pola_pembelian.set_title("Pola Pembelian Pelanggan per Bulan")
+ax_pola_pembelian.set_xlabel("Bulan")
+ax_pola_pembelian.set_ylabel("Total Penjualan")
+st.pyplot(fig_pola_pembelian)
