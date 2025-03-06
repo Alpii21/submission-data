@@ -9,9 +9,9 @@ st.image("https://github.com/dicodingacademy/assets/raw/main/logo.png")
 st.header('Dicoding Collection Dashboard :sparkles:')
 
 # Membaca File CSV
-orders_df = pd.read_csv("../data/orders_dataset.csv")
-payments_df = pd.read_csv("../data/order_payments_dataset.csv")
-customers_df = pd.read_csv("../data/customers_dataset.csv")
+orders_df = pd.read_csv("https://github.com/Alpii21/submission-data/blob/main/data/customers_dataset.csv")
+payments_df = pd.read_csv("https://github.com/Alpii21/submission-data/blob/main/data/order_payments_dataset.csv")
+customers_df = pd.read_csv("https://github.com/Alpii21/submission-data/blob/main/data/customers_dataset.csv")
 
 # Menggabungkan DataFrame
 order_payments_df = pd.merge(orders_df, payments_df, on="order_id", how="left")
@@ -23,7 +23,7 @@ all_data["order_purchase_timestamp"] = pd.to_datetime(all_data["order_purchase_t
 all_data.fillna(0, inplace=True)
 
 # Menyimpan all_data (Opsional)
-all_data.to_csv("all_data.csv", index=False)
+all_data.to_csv("https://github.com/Alpii21/submission-data/blob/main/dashboard/all_data.csv", index=False)
 
 # Menampilkan beberapa baris pertama dari all_data
 st.write("Data Gabungan:")
