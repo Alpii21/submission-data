@@ -13,14 +13,14 @@ st.header('Dicoding Collection Dashboard :sparkles:')
 st.title("Dashboard Analisis Data Pelanggan & Produk")
 
 # Membaca File CSV
-customers_df = pd.read_csv("https://github.com/Alpii21/submission-data/blob/main/data/customers_dataset.csv?raw=true")
-gelocation_df = pd.read_csv("https://github.com/Alpii21/submission-data/blob/main/data/geolocation_dataset.csv?raw=true")
-orders_items_df = pd.read_csv("https://github.com/Alpii21/submission-data/blob/main/data/orders_dataset.csv?raw=true")
-orders_payments_df = pd.read_csv("https://github.com/Alpii21/submission-data/blob/main/data/order_payments_dataset.csv?raw=true")
-orders_reviews_df = pd.read_csv("https://github.com/Alpii21/submission-data/blob/main/data/order_reviews_dataset.csv?raw=true")
-orders_df = pd.read_csv("https://github.com/Alpii21/submission-data/blob/main/data/orders_dataset.csv?raw=true")
-product_category_df = pd.read_csv("https://github.com/Alpii21/submission-data/blob/main/data/product_category_name_translation.csv?raw=true")
-products_df = pd.read_csv("https://github.com/Alpii21/submission-data/blob/main/data/products_dataset.csv?raw=true")
+customers_df = pd.read_csv("https://github.com/Alpii21/submission-data/blob/main/data/customers_dataset.csv")
+gelocation_df = pd.read_csv("https://github.com/Alpii21/submission-data/blob/main/data/geolocation_dataset.csv")
+orders_items_df = pd.read_csv("https://github.com/Alpii21/submission-data/blob/main/data/orders_dataset.csv")
+orders_payments_df = pd.read_csv("https://github.com/Alpii21/submission-data/blob/main/data/order_payments_dataset.csv")
+orders_reviews_df = pd.read_csv("https://github.com/Alpii21/submission-data/blob/main/data/order_reviews_dataset.csv")
+orders_df = pd.read_csv("https://github.com/Alpii21/submission-data/blob/main/data/orders_dataset.csv")
+product_category_df = pd.read_csv("https://github.com/Alpii21/submission-data/blob/main/data/product_category_name_translation.csv")
+products_df = pd.read_csv("https://github.com/Alpii21/submission-data/blob/main/data/products_dataset.csv")
 sellers_df = pd.read_csv("https://github.com/Alpii21/submission-data/blob/main/data/sellers_dataset.csv")
 
 
