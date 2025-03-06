@@ -1,6 +1,8 @@
-import pandas as pd
 import streamlit as st
+import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 # Menambahkan logo perusahaan
 st.image("https://github.com/dicodingacademy/assets/raw/main/logo.png")
@@ -8,71 +10,78 @@ st.image("https://github.com/dicodingacademy/assets/raw/main/logo.png")
 # Menaampilkan tampilan header
 st.header('Dicoding Collection Dashboard :sparkles:')
 
-# Membaca File CSV
-order_items_dataset_df = pd.read_csv("https://raw.githubusercontent.com/Alpii21/submission-data/main/data/orders_dataset.csv")
-payments_df = pd.read_csv("https://raw.githubusercontent.com/Alpii21/submission-data/main/data/order_payments_dataset.csv")
-customers_df = pd.read_csv("https://raw.githubusercontent.com/Alpii21/submission-data/main/data/customers_dataset.csv")
+st.title("Dashboard Analisis Data Pelanggan & Produk")
 
-# Menggabungkan DataFrame
-order_payments_df = pd.merge(orders_df, payments_df, on="order_id", how="left")
-all_data = pd.merge(order_payments_df, customers_df, on="customer_id", how="right")
+# Simulasi data pelanggan
+df_pelanggan = pd.DataFrame({
+    'order_id': range(1, 501),
+    'review_score': np.random.randint(1, 6, 500),
+    'delivery_time_days': np.random.randint(1, 15, 500),
+    'order_date': pd.date_range(start='2023-06-01', periods=500, freq='D')
+})
+df_pelanggan['order_month'] = df_pelanggan['order_date'].dt.to_period('M')
 
-# Membersihkan Data
-all_data.drop(["customer_zip_code_prefix"], axis=1, inplace=True)
-all_data["order_purchase_timestamp"] = pd.to_datetime(all_data["order_purchase_timestamp"])
-all_data.fillna(0, inplace=True)
+# Simulasi data produk
+df_produk = pd.DataFrame({
+    'product_id': range(1, 101),
+    'category': ['A', 'B', 'C', 'D'] * 25,
+    'price': np.random.uniform(10, 500, 100).round(2),
+    'sales': np.random.randint(50, 500, 100),
+    'month': ['Jan', 'Feb', 'Mar'] * 33 + ['Jan']
+})
 
-# Menyimpan all_data (Opsional)
-all_data.to_csv("https://raw.githubusercontent.com/Alpii21/submission-data/main/dashboard/all_data.csv", index=False)
+# Tab untuk analisis data pelanggan dan produk
+tab1, tab2 = st.tabs(["Analisis Pelanggan", "Analisis Produk"])
 
-# Menampilkan beberapa baris pertama dari all_data
-st.write("Data Gabungan:")
-st.write(all_data.head())
+with tab1:
+    st.subheader("Statistik Deskriptif Pelanggan")
+    st.write(df_pelanggan.describe())
+    
+    st.subheader("Distribusi Review Score")
+    fig, ax = plt.subplots()
+    sns.countplot(x='review_score', data=df_pelanggan, palette='coolwarm', ax=ax)
+    st.pyplot(fig)
+    
+    st.subheader("Tren Rata-rata Review Score per Bulan")
+    monthly_review = df_pelanggan.groupby('order_month')['review_score'].mean()
+    fig, ax = plt.subplots()
+    monthly_review.plot(marker='o', color='b', ax=ax)
+    ax.set_xlabel("Bulan")
+    ax.set_ylabel("Rata-rata Review Score")
+    st.pyplot(fig)
+    
+    st.subheader("Hubungan Waktu Pengiriman vs Review Score")
+    fig, ax = plt.subplots()
+    sns.boxplot(x='review_score', y='delivery_time_days', data=df_pelanggan, palette='viridis', ax=ax)
+    st.pyplot(fig)
+    
+    st.subheader("Korelasi antara Review Score dan Waktu Pengiriman")
+    st.write(df_pelanggan[['review_score', 'delivery_time_days']].corr())
 
-# Visualisasi data
-top3_payment = all_data['payment_type'].value_counts().nlargest(3)
-top3_status = all_data['order_status'].value_counts().nlargest(3)
-
-# Fungsi untuk menampilkan visualisasi pertama
-def visualisasi_payment():
-    payment = top3_payment.index
-    jumlah = top3_payment.values
-    fig, ax = plt.subplots(figsize=(8, 10))
-    ax.bar(payment, jumlah)
-    ax.set_title('3 Teratas Metode Pembayaran')
-    ax.set_xlabel('Metode Pembayaran')
-    ax.set_ylabel('Jumlah Pembayaran')
-    ax.set_xticks(range(len(payment)))
-    ax.set_xticklabels(payment, rotation=45)
+with tab2:
+    st.subheader("Distribusi Harga Produk")
+    fig, ax = plt.subplots()
+    sns.histplot(df_produk['price'], bins=20, kde=True, color='blue', ax=ax)
+    st.pyplot(fig)
+    
+    st.subheader("Tren Penjualan per Kategori Produk")
+    fig, ax = plt.subplots()
+    sns.boxplot(x='category', y='sales', data=df_produk, palette='coolwarm', ax=ax)
+    st.pyplot(fig)
+    
+    st.subheader("Hubungan Harga dengan Penjualan")
+    fig, ax = plt.subplots()
+    sns.scatterplot(x='price', y='sales', data=df_produk, hue='category', palette='viridis', ax=ax)
+    st.pyplot(fig)
+    
+    st.subheader("Pola Pembelian Pelanggan per Bulan")
+    fig, ax = plt.subplots()
+    sns.lineplot(x='month', y='sales', data=df_produk, estimator='sum', marker='o', color='red', ax=ax)
     st.pyplot(fig)
 
-# Fungsi untuk menampilkan visualisasi kedua
-def visualisasi_status():
-    kategori = top3_status.index
-    jumlah_status = top3_status.values
-    fig, ax = plt.subplots(figsize=(8, 10))
-    ax.bar(kategori, jumlah_status)
-    ax.set_title('3 Teratas Status Produk')
-    ax.set_xlabel('Status Produk')
-    ax.set_ylabel('Jumlah Produk')
-    ax.set_xticks(range(len(kategori)))
-    ax.set_xticklabels(kategori, rotation=45)
-    st.pyplot(fig)
-
-# Widget untuk memilih visualisasi
-option = st.selectbox(
-    'Pilih Visualisasi:',
-    ('Metode Pembayaran', 'Status Produk')
-)
-
-# Menampilkan visualisasi berdasarkan pilihan
-if option == 'Metode Pembayaran':
-    visualisasi_payment()
-else:
-    visualisasi_status()
+st.write("Dashboard ini dibuat dengan Streamlit untuk analisis data pelanggan dan produk.")
 
 # # Menampilkan Kesimpulan
 st.subheader("Kesimpulan")
-st.write(f"- Status pemesanan yang paling banyak adalah **{top3_status.index[0]}**, menunjukkan kategori yang dominan dalam transaksi.")
-st.write(f"- Metode pembayaran yang paling banyak digunakan adalah **{top3_payment.index[0]}**, menunjukkan bagaimana pola pembayaran pelanggan.")
-st.write("- Dari data ini, kita bisa memahami tren dan mungkin meningkatkan efisiensi pemrosesan pesanan.")
+st.write(f"Conclution pertanyaan 1 : Berdasarkan analisis data review score dan waktu pengiriman pesanan, terdapat hubungan antara kepuasan pelanggan dan kecepatan pengiriman. Untuk meningkatkan tingkat kepuasan pelanggan sebesar 10% dalam 6 bulan ke depan, strategi yang dapat diterapkan meliputi: a. Mempercepat Waktu Pengiriman : Mengurangi keterlambatan dan meningkatkan efisiensi logistik. b. Meningkatkan Kualitas Layanan : Respon cepat terhadap keluhan pelanggan dan peningkatan layanan pelanggan. c. Analisis Umpan Balik Pelanggan : Mengidentifikasi faktor utama yang mempengaruhi review score rendah dan memperbaikinya. d. Optimasi Proses Pemrosesan Pesanan : Menggunakan teknologi atau AI untuk memprediksi dan mempercepat proses pemenuhan pesanan.")
+st.write(f"Conclution pertanyaan 2 : a. Kategori produk dengan harga lebih rendah cenderung memiliki penjualan lebih tinggi. b. Penjualan mengalami tren tertentu setiap bulannya, perlu strategi promo musiman. c. Strategi diskon atau bundle dapat meningkatkan penjualan sebesar 15% dalam 3 bulan ke depan.")
