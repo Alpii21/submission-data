@@ -13,6 +13,7 @@ st.header('Dicoding Collection Dashboard :sparkles:')
 st.title("Dashboard Analisis Data Pelanggan & Produk")
 
 # Membaca File CSV
+customers_df = pd.read_csv("D:\DicodingML\E-Commerce Public Dataset\customers_dataset.csv")
 orders_df = pd.read_csv("D:\DicodingML\E-Commerce Public Dataset\orders_dataset.csv")
 payments_df = pd.read_csv("D:\DicodingML\E-Commerce Public Dataset\order_payments_dataset.csv")
 customers_df = pd.read_csv("D:\DicodingML\E-Commerce Public Dataset\customers_dataset.csv")
