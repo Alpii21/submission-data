@@ -75,6 +75,18 @@ fig, ax = plt.subplots(figsize=(12, 6))
 sns.lineplot(x='month', y='sales', data=df_sales, estimator='sum', errorbar=None, marker='o', color='red', ax=ax)
 st.pyplot(fig)
 
+# Analisis Tren Penjualan Bulanan dan Hubungan Harga dengan Penjualan
+st.subheader("Analisis Tren Penjualan Bulanan dan Harga")
+fig, ax = plt.subplots(figsize=(12, 6))
+sns.boxplot(x='category', y='sales', data=df_sales, hue='category', palette='coolwarm', ax=ax)
+st.pyplot(fig)
+
+fig, ax = plt.subplots(figsize=(10, 5))
+sns.scatterplot(x='price', y='sales', data=df_sales, hue='category', palette='viridis', ax=ax)
+ax.set_xlabel("Harga Produk")
+ax.set_ylabel("Jumlah Penjualan")
+st.pyplot(fig)
+
 # --- Kesimpulan ---
 st.subheader("📌 Insight dan Conclution")
 st.markdown("""
