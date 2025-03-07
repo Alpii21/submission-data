@@ -56,11 +56,19 @@ ax.set_ylabel('Rata-rata Review Score')
 ax.grid()
 st.pyplot(fig)
 
+st.subheader("📊 Distribusi Review Score")
+fig, ax = plt.subplots(figsize=(8, 5))
+sns.countplot(x='review_score', data=filtered_reviews, palette='coolwarm', ax=ax)
+ax.set_title("Distribusi Review Score")
+ax.set_xlabel("Review Score")
+ax.set_ylabel("Jumlah")
+st.pyplot(fig)
+
 # --- Pertanyaan 2 ---
 st.header("📌 Pertanyaan 2: Strategi Harga dan Promosi")
 st.subheader("💰 Hubungan Harga dengan Penjualan untuk " + kategori_terpilih)
 fig, ax = plt.subplots(figsize=(10, 5))
-sns.scatterplot(x='price', y='sales', data=filtered_sales, color='purple', ax=ax)
+sns.scatterplot(x='price', y='sales', data=filtered_sales, hue='category', palette='viridis', ax=ax)
 ax.set_title("Hubungan Harga dengan Penjualan")
 ax.set_xlabel("Harga Produk")
 ax.set_ylabel("Jumlah Penjualan")
@@ -73,6 +81,15 @@ sns.lineplot(x='month', y='sales', data=df_sales, estimator='sum', errorbar=None
 ax.set_title("Pola Pembelian Pelanggan per Bulan")
 ax.set_xlabel("Bulan")
 ax.set_ylabel("Total Penjualan")
+st.pyplot(fig)
+
+# --- Tren Penjualan per Kategori Produk ---
+st.subheader("📦 Tren Penjualan per Kategori Produk")
+fig, ax = plt.subplots(figsize=(12, 6))
+sns.boxplot(x='category', y='sales', data=df_sales, palette='coolwarm', ax=ax)
+ax.set_title("Tren Penjualan per Kategori Produk")
+ax.set_xlabel("Kategori Produk")
+ax.set_ylabel("Penjualan")
 st.pyplot(fig)
 
 # --- Kesimpulan ---
