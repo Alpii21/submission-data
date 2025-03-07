@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Load datasets
-orders_df = pd.read_csv('/mnt/data/orders_dataset.csv')
-order_reviews_df = pd.read_csv('/mnt/data/order_reviews_dataset.csv')
+orders_df = pd.read_csv('C:\dicoding\submission\data\orders_dataset.csv')
+order_reviews_df = pd.read_csv('C:\dicoding\submission\data\order_reviews_dataset.csv')
 
 # Convert date columns
 orders_df["order_purchase_timestamp"] = pd.to_datetime(orders_df["order_purchase_timestamp"])
