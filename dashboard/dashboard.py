@@ -38,13 +38,15 @@ df_sales['month'] = df_sales['order_purchase_timestamp'].dt.strftime('%b')
 st.sidebar.header("🔍 Eksplorasi Data")
 kategori_terpilih = st.sidebar.selectbox("Pilih Kategori Produk:", df_sales['category'].unique())
 harga_max = st.sidebar.slider("Batas Maksimum Harga Produk:", int(df_sales['price'].min()), int(df_sales['price'].max()), int(df_sales['price'].max()))
+review_min = st.sidebar.slider("Filter Review Score Minimum:", 1, 5, 1)
 
-# Filter data
+# Filter data berdasarkan kategori dan harga
 filtered_sales = df_sales[(df_sales['category'] == kategori_terpilih) & (df_sales['price'] <= harga_max)]
+filtered_reviews = df_reviews[df_reviews['review_score'] >= review_min]
 
 # --- Visualisasi Review Score ---
 st.subheader("📈 Tren Rata-rata Review Score per Bulan")
-monthly_review = df_reviews.groupby('order_date')['review_score'].mean()
+monthly_review = filtered_reviews.groupby('order_date')['review_score'].mean()
 fig, ax = plt.subplots(figsize=(10, 5))
 monthly_review.plot(marker='o', color='b', ax=ax)
 ax.set_title('Tren Rata-rata Review Score per Bulan')
