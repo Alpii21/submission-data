@@ -28,7 +28,7 @@ data_sales = {
     'order_purchase_timestamp': pd.date_range(start='2023-01-01', periods=100, freq='D')
 }
 df_seler = pd.DataFrame(data_sales)
-df_sseler['month'] = df_sales['order_purchase_timestamp'].dt.strftime('%b')
+df_seler['month'] = df_seler['order_purchase_timestamp'].dt.strftime('%b')
 
 # Filter Interaktif
 selected_category = st.sidebar.multiselect("Pilih Kategori Produk", df_seler['category'].unique(), default=df_seler['category'].unique())
@@ -57,25 +57,25 @@ st.pyplot(fig)
 # Distribusi Harga Produk
 st.subheader("Distribusi Harga Produk")
 fig, ax = plt.subplots()
-sns.histplot(filtered_sales['price'], bins=20, kde=True, color='blue', ax=ax)
+sns.histplot(filtered_seler['price'], bins=20, kde=True, color='blue', ax=ax)
 st.pyplot(fig)
 
 # Tren Penjualan per Kategori Produk
 st.subheader("Tren Penjualan per Kategori Produk")
 fig, ax = plt.subplots()
-sns.boxplot(x='category', y='sales', data=filtered_sales, palette='coolwarm', ax=ax)
+sns.boxplot(x='category', y='sales', data=filtered_seler, palette='coolwarm', ax=ax)
 st.pyplot(fig)
 
 # Hubungan Harga dengan Penjualan
 st.subheader("Hubungan Harga dengan Penjualan")
 fig, ax = plt.subplots()
-sns.scatterplot(x='price', y='sales', data=filtered_sales, hue='category', palette='viridis', ax=ax)
+sns.scatterplot(x='price', y='sales', data=filtered_seler, hue='category', palette='viridis', ax=ax)
 st.pyplot(fig)
 
 # Tren Penjualan per Bulan
 st.subheader("Pola Pembelian Pelanggan per Bulan")
 fig, ax = plt.subplots()
-sns.lineplot(x='month', y='sales', data=filtered_sales, estimator='sum', marker='o', color='red', ax=ax)
+sns.lineplot(x='month', y='seler', data=filtered_seler, estimator='sum', marker='o', color='red', ax=ax)
 st.pyplot(fig)
 
 # --- Kesimpulan ---
