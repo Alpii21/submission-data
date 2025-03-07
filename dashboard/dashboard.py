@@ -7,9 +7,7 @@ import seaborn as sns
 # Menaampilkan tampilan header
 st.header('E-Commerce Public Dataset :sparkles:')
 
-st.title("Dashboard Analisis Data Pelanggan & Produk")
-
-# Simulasi data pelanggan (Contoh dataset)
+# data customers (E-Commerce Public Dataset :sparkles)
 data_pelanggan = {
     'order_id': range(1, 501),
     'review_score': np.random.randint(1, 6, 500),  # Skala 1-5
