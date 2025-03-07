@@ -4,92 +4,76 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# Konfigurasi tampilan Streamlit
-st.set_page_config(layout="wide", page_title="Analisis Strategi Bisnis")
+# Load datasets
+orders_df = pd.read_csv('/mnt/data/orders_dataset.csv')
+order_reviews_df = pd.read_csv('/mnt/data/order_reviews_dataset.csv')
 
-# Judul dashboard
-st.title("📊 Dashboard Analisis Strategi Bisnis")
+# Convert date columns
+orders_df["order_purchase_timestamp"] = pd.to_datetime(orders_df["order_purchase_timestamp"])
 
-# --- Data untuk Review Score ---
-orders_df = pd.DataFrame({"order_purchase_timestamp": pd.date_range(start='2023-06-01', periods=500, freq='D')})
-order_reviews_df = pd.DataFrame({"review_score": np.random.randint(1, 6, 500)})
-
+# Question 1: Customer Service Improvement Impact
 min_length = min(len(orders_df), len(order_reviews_df), 500)
-review_data = {
+
+data = {
     "order_id": range(1, min_length + 1),
     "review_score": order_reviews_df["review_score"].fillna(order_reviews_df["review_score"].median()).astype(int)[:min_length],
     "order_date": pd.date_range(start='2023-06-01', periods=min_length, freq='D')
 }
-df_reviews = pd.DataFrame(review_data)
-df_reviews['order_date'] = df_reviews['order_date'].dt.to_period('M')
+df_reviews = pd.DataFrame(data)
 
-# --- Data untuk Penjualan Produk ---
+df_reviews['order_date'] = df_reviews['order_date'].dt.to_period('M')
+monthly_review = df_reviews.groupby('order_date')['review_score'].mean()
+
+# Question 2: Pricing and Promotion Impact
+categories = ['beleza_saude', 'telefonia_fixa', 'brinquedos', 'bebes']
 data = {
     'product_id': range(1, 101),
-    'category': ['beleza_saude', 'telefonia_fixa', 'brinquedos', 'bebes'] * 25,
+    'category': categories * 25,
     'price': [round(x, 2) for x in np.random.uniform(10, 500, 100)],
     'sales': [np.random.randint(50, 500) for _ in range(100)],
     'order_purchase_timestamp': pd.date_range(start='2023-01-01', periods=100, freq='D')
 }
 df_sales = pd.DataFrame(data)
+
 df_sales['month'] = df_sales['order_purchase_timestamp'].dt.strftime('%b')
+monthly_sales = df_sales.groupby('month')['sales'].sum()
 
-# --- Sidebar untuk interaktif ---
-st.sidebar.header("🔍 Eksplorasi Data")
-kategori_terpilih = st.sidebar.selectbox("Pilih Kategori Produk:", df_sales['category'].unique())
-harga_max = st.sidebar.slider("Batas Maksimum Harga Produk:", int(df_sales['price'].min()), int(df_sales['price'].max()), int(df_sales['price'].max()))
-review_min = st.sidebar.slider("Filter Review Score Minimum:", 1, 5, 1)
+# Streamlit App
+st.title("Business Strategy Dashboard")
 
-# Filter data berdasarkan kategori dan harga
-filtered_sales = df_sales[(df_sales['category'] == kategori_terpilih) & (df_sales['price'] <= harga_max)]
-filtered_reviews = df_reviews[df_reviews['review_score'] >= review_min]
+# Filters
+selected_category = st.selectbox("Select Category", categories)
+filtered_sales = df_sales[df_sales['category'] == selected_category]
 
-# --- Pertanyaan 1 ---
-st.header("📌 Pertanyaan 1: Strategi Peningkatan Layanan Pelanggan")
-st.subheader("📈 Tren Rata-rata Review Score per Bulan")
-monthly_review = filtered_reviews.groupby('order_date')['review_score'].mean()
+# Question 1 Visualization
+st.header("Customer Service Improvement Impact")
 fig, ax = plt.subplots(figsize=(10, 5))
 monthly_review.plot(marker='o', color='b', ax=ax)
-ax.set_title('Tren Rata-rata Review Score per Bulan')
-ax.set_xlabel('Bulan')
-ax.set_ylabel('Rata-rata Review Score')
+ax.set_title('Trend of Average Review Score Per Month')
+ax.set_xlabel('Month')
+ax.set_ylabel('Average Review Score')
 ax.grid()
 st.pyplot(fig)
 
-st.subheader("📊 Distribusi Review Score")
-fig, ax = plt.subplots(figsize=(8, 5))
-sns.countplot(x='review_score', data=filtered_reviews, palette='coolwarm', ax=ax)
-ax.set_title("Distribusi Review Score")
-ax.set_xlabel("Review Score")
-ax.set_ylabel("Jumlah")
-st.pyplot(fig)
-
-# --- Pertanyaan 2 ---
-st.header("📌 Pertanyaan 2: Strategi Harga dan Promosi")
-st.subheader("💰 Hubungan Harga dengan Penjualan untuk " + kategori_terpilih)
-fig, ax = plt.subplots(figsize=(10, 5))
-sns.scatterplot(x='price', y='sales', data=filtered_sales, hue='category', palette='viridis', ax=ax)
-ax.set_title("Hubungan Harga dengan Penjualan")
-ax.set_xlabel("Harga Produk")
-ax.set_ylabel("Jumlah Penjualan")
-st.pyplot(fig)
-
-# --- Visualisasi Pola Penjualan Bulanan ---
-st.subheader("📅 Pola Pembelian Pelanggan per Bulan")
-fig, ax = plt.subplots(figsize=(12, 6))
-sns.lineplot(x='month', y='sales', data=df_sales, estimator='sum', errorbar=None, marker='o', color='red', ax=ax)
-ax.set_title("Pola Pembelian Pelanggan per Bulan")
-ax.set_xlabel("Bulan")
-ax.set_ylabel("Total Penjualan")
-st.pyplot(fig)
-
-# --- Tren Penjualan per Kategori Produk ---
-st.subheader("📦 Tren Penjualan per Kategori Produk")
+# Question 2 Visualization
+st.header("Pricing and Promotion Impact")
 fig, ax = plt.subplots(figsize=(12, 6))
 sns.boxplot(x='category', y='sales', data=df_sales, palette='coolwarm', ax=ax)
-ax.set_title("Tren Penjualan per Kategori Produk")
-ax.set_xlabel("Kategori Produk")
-ax.set_ylabel("Penjualan")
+ax.set_title("Sales Trend by Product Category")
+st.pyplot(fig)
+
+# Scatter plot: Price vs Sales
+fig, ax = plt.subplots(figsize=(10, 5))
+sns.scatterplot(x='price', y='sales', data=filtered_sales, hue='category', palette='viridis', ax=ax)
+ax.set_title("Price vs Sales Relationship")
+st.pyplot(fig)
+
+# Monthly Sales Bar Chart
+fig, ax = plt.subplots(figsize=(12, 6))
+monthly_sales.plot(kind='bar', color='red', ax=ax)
+ax.set_title("Monthly Sales Trend")
+ax.set_xlabel("Month")
+ax.set_ylabel("Total Sales")
 st.pyplot(fig)
 
 # --- Kesimpulan ---
