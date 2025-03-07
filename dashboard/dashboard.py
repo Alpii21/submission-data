@@ -16,7 +16,7 @@ data_pelanggan = {
 }
 df_pelanggan = pd.DataFrame(data_pelanggan)
 
-# Simulasi data produk (Contoh dataset)
+# data produk (E-Commerce Public Dataset :sparkles)
 data_produk = {
     'product_id': range(1, 101),
     'category': ['A', 'B', 'C', 'D'] * 25,
