@@ -4,71 +4,102 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# Membuat data review score
-data_reviews = {
-    "order_id": range(1, 501),
-    "review_score": np.random.randint(1, 6, 500),
-    "order_date": pd.date_range(start='2023-06-01', periods=500, freq='D')
-}
-df_reviews = pd.DataFrame(data_reviews)
+# Membaca dataset
+orders_df = pd.read_csv('C:\dicoding\submission\data\orders_dataset.csv')
+order_reviews_df = pd.read_csv('C:\dicoding\submission\data\order_reviews_dataset.csv')
 
+# Konversi kolom tanggal ke format datetime
+orders_df["order_purchase_timestamp"] = pd.to_datetime(orders_df["order_purchase_timestamp"])
+
+# Pertanyaan 1: Strategi Peningkatan Layanan Pelanggan
+st.title("Analisis Review Score dan Layanan Pelanggan")
+st.subheader("Bagaimana strategi peningkatan layanan pelanggan dapat meningkatkan rata-rata review score sebesar 10% dalam 6 bulan ke depan dan meningkatkan jumlah review positif (≥ 4) sebesar 20%?")
+
+# Menyesuaikan panjang data
+min_length = min(len(orders_df), len(order_reviews_df), 500)
+
+data = {
+    "order_id": range(1, min_length + 1),
+    "review_score": order_reviews_df["review_score"].fillna(order_reviews_df["review_score"].median()).astype(int)[:min_length],
+    "order_date": pd.date_range(start='2023-06-01', periods=min_length, freq='D')
+}
+df_reviews = pd.DataFrame(data)
+
+# Statistik deskriptif
+st.write("### Statistik Deskriptif Review Score")
+st.write(df_reviews.describe())
+
+# Visualisasi distribusi review score
+fig, ax = plt.subplots()
+sns.countplot(x='review_score', data=df_reviews, hue='review_score', palette='coolwarm', legend=False, ax=ax)
+ax.set_title('Distribusi Review Score')
+ax.set_xlabel('Review Score')
+ax.set_ylabel('Jumlah')
+st.pyplot(fig)
+
+# Tren rata-rata review score per bulan
 df_reviews['order_date'] = df_reviews['order_date'].dt.to_period('M')
 monthly_review = df_reviews.groupby('order_date')['review_score'].mean()
 
-# Membuat data penjualan produk
-data_sales = {
+fig, ax = plt.subplots()
+monthly_review.plot(marker='o', color='b', ax=ax)
+ax.set_title('Tren Rata-rata Review Score per Bulan')
+ax.set_xlabel('Bulan')
+ax.set_ylabel('Rata-rata Review Score')
+ax.grid()
+st.pyplot(fig)
+
+# Pertanyaan 2: Strategi Harga dan Promosi
+st.title("Analisis Harga dan Penjualan Produk")
+st.subheader("Bagaimana strategi harga dan promosi dapat meningkatkan total penjualan produk dalam kategori 'beleza_saude', 'telefonia_fixa', 'brinquedos', dan 'bebes' sebesar 15% dalam 6 bulan?")
+
+# Membuat data produk
+data = {
     'product_id': range(1, 101),
     'category': ['beleza_saude', 'telefonia_fixa', 'brinquedos', 'bebes'] * 25,
     'price': [round(x, 2) for x in np.random.uniform(10, 500, 100)],
-    'sales': [np.random.randint(50, 500) for _ in range(100)],
+    'seler': [np.random.randint(50, 500) for _ in range(100)],
     'order_purchase_timestamp': pd.date_range(start='2023-01-01', periods=100, freq='D')
 }
-df_sales = pd.DataFrame(data_sales)
-df_sales['month'] = df_sales['order_purchase_timestamp'].dt.strftime('%b')
+df_seler = pd.DataFrame(data)
 
-# Streamlit UI
-st.title("Dashboard Analisis Review Score dan Penjualan Produk")
+# Menambahkan kolom bulan
+df_seler['month'] = df_seler['order_purchase_timestamp'].dt.strftime('%b')
 
-# Filter untuk kategori produk
-selected_category = st.selectbox("Pilih Kategori Produk", df_sales['category'].unique())
-filtered_sales = df_sales[df_sales['category'] == selected_category]
+# Filter kategori
+selected_category = st.selectbox("Pilih kategori produk:", df_seler['category'].unique())
+filtered_sales = df_seler[df_seler['category'] == selected_category]
 
-# Menampilkan distribusi review score
-st.subheader("Distribusi Review Score")
-fig, ax = plt.subplots(figsize=(8, 5))
-sns.countplot(x='review_score', data=df_reviews, palette='coolwarm', ax=ax)
+# Distribusi Harga Produk
+fig, ax = plt.subplots()
+sns.histplot(filtered_sales['price'], bins=20, kde=True, color='blue', ax=ax)
+ax.set_title("Distribusi Harga Produk")
+ax.set_xlabel("Harga")
+ax.set_ylabel("Frekuensi")
 st.pyplot(fig)
 
-# Menampilkan tren rata-rata review score per bulan
-st.subheader("Tren Rata-rata Review Score per Bulan")
-fig, ax = plt.subplots(figsize=(10, 5))
-monthly_review.plot(marker='o', color='b', ax=ax)
+# Tren Penjualan per Kategori Produk
+fig, ax = plt.subplots()
+sns.boxplot(x='category', y='sales', data=df_seler, hue='category', palette='coolwarm', ax=ax)
+ax.set_title("Tren Penjualan per Kategori Produk")
+ax.set_xlabel("Kategori Produk")
+ax.set_ylabel("Penjualan")
+st.pyplot(fig)
+
+# Hubungan Harga dengan Penjualan
+fig, ax = plt.subplots()
+sns.scatterplot(x='price', y='seler', data=filtered_sales, hue='category', palette='viridis', ax=ax)
+ax.set_title("Hubungan Harga dengan Penjualan")
+ax.set_xlabel("Harga Produk")
+ax.set_ylabel("Jumlah Penjualan")
+st.pyplot(fig)
+
+# Analisis Tren Pola Pembelian Pelanggan per Bulan
+fig, ax = plt.subplots()
+sns.lineplot(x='month', y='seler', data=filtered_sales, estimator='sum', errorbar=None, marker='o', color='red', ax=ax)
+ax.set_title("Pola Pembelian Pelanggan per Bulan")
 ax.set_xlabel("Bulan")
-ax.set_ylabel("Rata-rata Review Score")
-st.pyplot(fig)
-
-# Menampilkan distribusi harga produk
-st.subheader("Distribusi Harga Produk")
-fig, ax = plt.subplots(figsize=(10, 5))
-sns.histplot(df_sales['price'], bins=20, kde=True, color='blue', ax=ax)
-st.pyplot(fig)
-
-# Menampilkan tren penjualan per kategori produk
-st.subheader("Tren Penjualan per Kategori Produk")
-fig, ax = plt.subplots(figsize=(12, 6))
-sns.boxplot(x='category', y='sales', data=df_sales, palette='coolwarm', ax=ax)
-st.pyplot(fig)
-
-# Menampilkan hubungan harga dengan penjualan
-st.subheader("Hubungan Harga dengan Penjualan")
-fig, ax = plt.subplots(figsize=(10, 5))
-sns.scatterplot(x='price', y='sales', data=filtered_sales, hue='category', palette='viridis', ax=ax)
-st.pyplot(fig)
-
-# Menampilkan analisis tren pola pembelian pelanggan per bulan
-st.subheader("Pola Pembelian Pelanggan per Bulan")
-fig, ax = plt.subplots(figsize=(12, 6))
-sns.lineplot(x='month', y='sales', data=filtered_sales, estimator='sum', errorbar=None, marker='o', color='red', ax=ax)
+ax.set_ylabel("Total Penjualan")
 st.pyplot(fig)
 
 # Keterangan
