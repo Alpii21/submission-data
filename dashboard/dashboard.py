@@ -4,6 +4,7 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+# ===================== DATA UNTUK PERTANYAAN 1 =====================
 # Simulasi data review pelanggan
 min_length = 500
 order_reviews_df = pd.DataFrame({
@@ -20,6 +21,7 @@ df_reviews = pd.DataFrame(data_reviews)
 df_reviews['order_date'] = df_reviews['order_date'].dt.to_period('M')
 monthly_review = df_reviews.groupby('order_date')['review_score'].mean()
 
+# ===================== DATA UNTUK PERTANYAAN 2 =====================
 # Simulasi data penjualan produk
 data_sales = {
     'product_id': range(1, 101),
@@ -31,16 +33,11 @@ data_sales = {
 df_sales = pd.DataFrame(data_sales)
 df_sales['month'] = df_sales['order_purchase_timestamp'].dt.strftime('%b')
 
-# Streamlit UI
+# ===================== STREAMLIT DASHBOARD =====================
 st.title("Dashboard Analisis Review dan Penjualan")
 
-# Sidebar untuk filter
-st.sidebar.header("Filter Data")
-selected_category = st.sidebar.selectbox("Pilih Kategori Produk", df_sales['category'].unique())
-selected_month = st.sidebar.selectbox("Pilih Bulan", df_sales['month'].unique())
-
-# Filter data berdasarkan input pengguna
-df_filtered = df_sales[(df_sales['category'] == selected_category) & (df_sales['month'] == selected_month)]
+# ===================== PERTANYAAN 1 =====================
+st.header("Analisis Strategi Peningkatan Layanan Pelanggan")
 
 # Menampilkan statistik deskriptif
 st.subheader("Statistik Deskriptif Review Score")
@@ -59,6 +56,17 @@ monthly_review.plot(marker='o', color='b', ax=ax)
 ax.set_xlabel("Bulan")
 ax.set_ylabel("Rata-rata Review Score")
 st.pyplot(fig)
+
+# ===================== PERTANYAAN 2 =====================
+st.header("Analisis Strategi Harga dan Promosi")
+
+# Sidebar untuk filter
+st.sidebar.header("Filter Data Penjualan")
+selected_category = st.sidebar.selectbox("Pilih Kategori Produk", df_sales['category'].unique())
+selected_month = st.sidebar.selectbox("Pilih Bulan", df_sales['month'].unique())
+
+# Filter data berdasarkan input pengguna
+df_filtered = df_sales[(df_sales['category'] == selected_category) & (df_sales['month'] == selected_month)]
 
 # Visualisasi penjualan berdasarkan kategori
 st.subheader(f"Penjualan Produk di Kategori {selected_category} pada Bulan {selected_month}")
