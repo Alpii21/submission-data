@@ -38,6 +38,7 @@ st.title("Dashboard Analisis Review dan Penjualan")
 
 # ===================== PERTANYAAN 1 =====================
 st.header("Analisis Strategi Peningkatan Layanan Pelanggan")
+st.write("Bagaimana strategi peningkatan layanan pelanggan dapat meningkatkan rata-rata review score sebesar 10% dalam 6 bulan ke depan dan meningkatkan jumlah review positif (≥ 4) sebesar 20%?")
 
 # Menampilkan statistik deskriptif
 st.subheader("Statistik Deskriptif Review Score")
@@ -59,6 +60,7 @@ st.pyplot(fig)
 
 # ===================== PERTANYAAN 2 =====================
 st.header("Analisis Strategi Harga dan Promosi")
+st.write("Bagaimana strategi harga dan promosi dapat meningkatkan total penjualan produk dalam kategori 'beleza_saude', 'telefonia_fixa', 'brinquedos', dan 'bebes' sebesar 15% dalam 6 bulan, dengan mempertimbangkan tren penjualan bulanan serta hubungan antara harga dan jumlah penjualan?")
 
 # Sidebar untuk filter
 st.sidebar.header("Filter Data Penjualan")
@@ -93,6 +95,15 @@ fig, ax = plt.subplots(figsize=(10, 5))
 sns.scatterplot(x='price', y='sales', data=df_sales, hue='category', palette='viridis', ax=ax)
 ax.set_xlabel("Harga Produk")
 ax.set_ylabel("Jumlah Penjualan")
+st.pyplot(fig)
+
+# Bar chart untuk total penjualan per kategori
+st.subheader("Total Penjualan per Kategori Produk")
+category_sales = df_sales.groupby('category')['sales'].sum().reset_index()
+fig, ax = plt.subplots(figsize=(10, 5))
+sns.barplot(x='category', y='sales', data=category_sales, palette='Blues', ax=ax)
+ax.set_xlabel("Kategori Produk")
+ax.set_ylabel("Total Penjualan")
 st.pyplot(fig)
 
 # --- Kesimpulan ---
