@@ -44,7 +44,8 @@ review_min = st.sidebar.slider("Filter Review Score Minimum:", 1, 5, 1)
 filtered_sales = df_sales[(df_sales['category'] == kategori_terpilih) & (df_sales['price'] <= harga_max)]
 filtered_reviews = df_reviews[df_reviews['review_score'] >= review_min]
 
-# --- Visualisasi Review Score ---
+# --- Pertanyaan 1 ---
+st.header("📌 Pertanyaan 1: Strategi Peningkatan Layanan Pelanggan")
 st.subheader("📈 Tren Rata-rata Review Score per Bulan")
 monthly_review = filtered_reviews.groupby('order_date')['review_score'].mean()
 fig, ax = plt.subplots(figsize=(10, 5))
@@ -55,7 +56,8 @@ ax.set_ylabel('Rata-rata Review Score')
 ax.grid()
 st.pyplot(fig)
 
-# --- Visualisasi Hubungan Harga & Penjualan ---
+# --- Pertanyaan 2 ---
+st.header("📌 Pertanyaan 2: Strategi Harga dan Promosi")
 st.subheader("💰 Hubungan Harga dengan Penjualan untuk " + kategori_terpilih)
 fig, ax = plt.subplots(figsize=(10, 5))
 sns.scatterplot(x='price', y='sales', data=filtered_sales, color='purple', ax=ax)
