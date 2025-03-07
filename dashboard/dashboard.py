@@ -3,10 +3,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-
-# Menambahkan logo perusahaan
-st.image("https://github.com/dicodingacademy/assets/raw/main/logo.png")
-    
+ 
 # Menaampilkan tampilan header
 st.header('E-Commerce Public Dataset :sparkles:')
 
