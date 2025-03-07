@@ -8,7 +8,7 @@ import seaborn as sns
 st.image("https://github.com/dicodingacademy/assets/raw/main/logo.png")
     
 # Menaampilkan tampilan header
-st.header('Dicoding Collection Dashboard :sparkles:')
+st.header('E-Commerce Public Dataset :sparkles:')
 
 st.title("Dashboard Analisis Data Pelanggan & Produk")
 

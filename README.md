@@ -1,4 +1,4 @@
-# Dicoding Collection Dashboard ✨
+# E-Commerce Public Dataset  ✨
 
 ## Setup Environment - Anaconda
 ```
@@ -18,5 +18,6 @@ pip install -r requirements.txt
 
 ## Run steamlit app
 ```
+cd C:\dicoding\submission\dashboard
 streamlit run dashboard.py
 ```
