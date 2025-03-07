@@ -52,7 +52,7 @@ selected_category = st.selectbox("Pilih Kategori Produk", categories)
 filtered_sales = df_seler[df_seler['category'] == selected_category]
 
 fig, ax = plt.subplots(figsize=(12, 6))
-sns.lineplot(x='month', y='sales', data=filtered_sales, estimator='sum', errorbar=None, marker='o', color='red', ax=ax)
+sns.lineplot(x='month', y='seler', data=filtered_sales, estimator='sum', errorbar=None, marker='o', color='red', ax=ax)
 ax.set_title("Pola Pembelian Pelanggan per Bulan")
 ax.set_xlabel("Bulan")
 ax.set_ylabel("Total Penjualan")
