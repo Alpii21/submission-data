@@ -4,8 +4,10 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Load datasets
-customers_df = pd.read_csv("data/customers_dataset.csv")
-orders_df = pd.read_csv("data/orders_dataset.csv")
+def load_data():
+    customers_df = pd.read_csv("data/customers_dataset.csv")
+    orders_df = pd.read_csv("data/orders_dataset.csv")
+    return customers_df, orders_df
 
 customers_df, orders_df = load_data()
 
