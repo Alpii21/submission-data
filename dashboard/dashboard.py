@@ -3,12 +3,6 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-# Identitas Pengembang
-st.sidebar.image("profile.jpg", width=150)
-st.sidebar.markdown("##  by: Alfiah")
-st.sidebar.markdown("### Data Analyst | E-Commerce Insights")
-st.sidebar.markdown("📧 mc796d5x0076@student.devacademy.id")
-
 # Load dataset
 @st.cache_data
 def load_data():
