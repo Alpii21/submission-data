@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 # Load dataset
 @st.cache_data
 def load_data():
-    customers_df = pd.read_csv("customers_dataset.csv")
-    orders_df = pd.read_csv("orders_dataset.csv")
+    customers_df = pd.read_csv("data\customers_dataset.csv")
+    orders_df = pd.read_csv("data\orders_dataset.csv")
     return customers_df, orders_df
 
 customers_df, orders_df = load_data()
