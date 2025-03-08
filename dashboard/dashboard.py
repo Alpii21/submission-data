@@ -7,66 +7,82 @@ import seaborn as sns
 customers_df = pd.read_csv("data/customers_dataset.csv")
 orders_df = pd.read_csv("data/orders_dataset.csv")
 
-# Konversi kolom tanggal ke format datetime
+customers_df, orders_df = load_data()
+
+# Convert date columns to datetime
 date_columns = [
-    "order_purchase_timestamp", "order_approved_at", "order_delivered_carrier_date", 
+    "order_purchase_timestamp", "order_approved_at", "order_delivered_carrier_date",
     "order_delivered_customer_date", "order_estimated_delivery_date"
 ]
 for col in date_columns:
     orders_df[col] = pd.to_datetime(orders_df[col])
 
-# Sidebar - Filter Status Pesanan
-st.sidebar.header("Filter Data")
+# Sidebar filter
+st.sidebar.header("Filter")
 selected_status = st.sidebar.multiselect("Pilih Status Pesanan:", orders_df["order_status"].unique(), default=orders_df["order_status"].unique())
-filtered_orders = orders_df[orders_df["order_status"].isin(selected_status)]
 
+# Filter by date range
+st.sidebar.subheader("Filter Berdasarkan Tanggal Pemesanan")
+start_date = st.sidebar.date_input("Tanggal Mulai", orders_df["order_purchase_timestamp"].min().date())
+end_date = st.sidebar.date_input("Tanggal Akhir", orders_df["order_purchase_timestamp"].max().date())
+
+filtered_orders = orders_df[(orders_df["order_status"].isin(selected_status)) & 
+                            (orders_df["order_purchase_timestamp"].dt.date >= start_date) & 
+                            (orders_df["order_purchase_timestamp"].dt.date <= end_date)]
+
+# Dashboard Title
 st.title("📊 E-Commerce Public Dataset")
 
-# 1. Distribusi Status Pesanan
+# Order Status Distribution
 st.subheader("Distribusi Status Pesanan")
-status_counts = filtered_orders["order_status"].value_counts()
-fig, ax = plt.subplots(figsize=(10,5))
-sns.barplot(x=status_counts.index, y=status_counts.values, palette="viridis", ax=ax)
-plt.xlabel("Status Pesanan")
-plt.ylabel("Jumlah")
+fig, ax = plt.subplots(figsize=(10, 5))
+order_status_counts = filtered_orders["order_status"].value_counts()
+sns.barplot(x=order_status_counts.index, y=order_status_counts.values, ax=ax, palette="viridis")
+ax.set_xlabel("Status Pesanan")
+ax.set_ylabel("Jumlah")
+ax.set_title("Distribusi Status Pesanan")
 st.pyplot(fig)
 
-# 2. Tren Pemesanan per Bulan
+# Trend of Orders Over Time
 st.subheader("Tren Pemesanan per Bulan")
 filtered_orders["order_month"] = filtered_orders["order_purchase_timestamp"].dt.to_period("M")
 monthly_orders = filtered_orders["order_month"].value_counts().sort_index()
-fig, ax = plt.subplots(figsize=(12,6))
-sns.lineplot(x=monthly_orders.index.astype(str), y=monthly_orders.values, marker="o", color="b", ax=ax)
-plt.xlabel("Bulan")
-plt.ylabel("Jumlah Pesanan")
-plt.xticks(rotation=45)
+fig, ax = plt.subplots(figsize=(12, 6))
+sns.lineplot(x=monthly_orders.index.astype(str), y=monthly_orders.values, marker="o", ax=ax)
+ax.set_xlabel("Bulan")
+ax.set_ylabel("Jumlah Pesanan")
+ax.set_title("Tren Pemesanan per Bulan")
+ax.grid(True)
 st.pyplot(fig)
 
-# 3. Distribusi Waktu Pengiriman
-st.subheader("Distribusi Waktu Pengiriman")
+# Delivery Time Analysis
+st.subheader("Analisis Waktu Pengiriman")
 filtered_orders["delivery_days"] = (filtered_orders["order_delivered_customer_date"] - filtered_orders["order_purchase_timestamp"]).dt.days
-fig, ax = plt.subplots(figsize=(10,5))
+fig, ax = plt.subplots(figsize=(10, 5))
 sns.histplot(filtered_orders["delivery_days"].dropna(), bins=30, kde=True, color='g', ax=ax)
-plt.xlabel("Jumlah Hari")
-plt.ylabel("Jumlah Pesanan")
+ax.set_xlabel("Jumlah Hari")
+ax.set_ylabel("Jumlah Pesanan")
+ax.set_title("Distribusi Waktu Pengiriman")
 st.pyplot(fig)
 
-# 4. Distribusi Pelanggan Berdasarkan Negara Bagian
+# Customer Distribution by State
 st.subheader("Distribusi Pelanggan Berdasarkan Negara Bagian")
-fig, ax = plt.subplots(figsize=(12,5))
+fig, ax = plt.subplots(figsize=(12, 5))
 customers_df["customer_state"].value_counts().plot(kind="bar", color="skyblue", ax=ax)
-plt.xlabel("State")
-plt.ylabel("Jumlah Pelanggan")
+ax.set_xlabel("State")
+ax.set_ylabel("Jumlah Pelanggan")
+ax.set_title("Distribusi Pelanggan Berdasarkan Negara Bagian")
 st.pyplot(fig)
 
-# 5. Distribusi Keterlambatan Pengiriman
+# Delivery Delays Analysis
 st.subheader("Distribusi Keterlambatan Pengiriman")
 filtered_orders["delay_time"] = (filtered_orders["order_delivered_customer_date"] - filtered_orders["order_estimated_delivery_date"]).dt.days
-fig, ax = plt.subplots(figsize=(10,5))
+fig, ax = plt.subplots(figsize=(10, 5))
 sns.histplot(filtered_orders["delay_time"].dropna(), bins=30, kde=True, color="red", ax=ax)
-plt.axvline(0, color='black', linestyle='--')
-plt.xlabel("Hari")
-plt.ylabel("Jumlah Pesanan")
+ax.axvline(0, color='black', linestyle='--')
+ax.set_xlabel("Hari")
+ax.set_ylabel("Jumlah Pesanan")
+ax.set_title("Distribusi Keterlambatan Pengiriman")
 st.pyplot(fig)
 
 # Insights
