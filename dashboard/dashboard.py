@@ -20,7 +20,17 @@ for col in date_columns:
 # Sidebar Filters
 st.sidebar.header("Filter")
 selected_status = st.sidebar.multiselect("Pilih Status Pesanan", orders_df["order_status"].unique(), default=orders_df["order_status"].unique())
-filtered_orders = orders_df[orders_df["order_status"].isin(selected_status)]
+
+# Date Range Filter
+date_min = orders_df["order_purchase_timestamp"].min()
+date_max = orders_df["order_purchase_timestamp"].max()
+selected_date_range = st.sidebar.date_input("Pilih Rentang Tanggal", [date_min, date_max], date_min, date_max)
+
+filtered_orders = orders_df[
+    (orders_df["order_status"].isin(selected_status)) &
+    (orders_df["order_purchase_timestamp"].dt.date >= selected_date_range[0]) &
+    (orders_df["order_purchase_timestamp"].dt.date <= selected_date_range[1])
+]
 
 # Main Dashboard
 st.title("📊 E-Commerce Public Dataset")
@@ -84,5 +94,3 @@ st.subheader("2. Analisis Keterlambatan Pengiriman")
 delayed_orders = filtered_orders[filtered_orders["delay_time"] > 0]
 st.write(f"Total pesanan yang mengalami keterlambatan: {len(delayed_orders)}")
 st.write("Strategi: Optimalisasi rantai pasokan dan peningkatan efisiensi logistik dapat mengurangi keterlambatan pengiriman.")
-
-st.write("Terima kasih telah menggunakan dashboard ini! 🚀")
