@@ -3,14 +3,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-orders_df = pd.read_csv("/mnt/data/orders_dataset.csv", parse_dates=[
+# Load dataset
+orders_df = pd.read_csv("C:\dicoding\submission\data\orders_dataset.csv", parse_dates=[
     "order_purchase_timestamp", "order_approved_at", 
     "order_delivered_carrier_date", "order_delivered_customer_date", 
     "order_estimated_delivery_date"
 ])
-
-# Load dataset
-orders_df = pd.read_csv("C:\dicoding\submission\data\orders_dataset.csv", parse_dates=["order_purchase_timestamp", "order_approved_at", "order_delivered_carrier_date", "order_delivered_customer_date", "order_estimated_delivery_date"]),
 customers_df = pd.read_csv("C:\dicoding\submission\data\customers_dataset.csv")
 
 # Sidebar - Filter
