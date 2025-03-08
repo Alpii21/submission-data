@@ -23,7 +23,7 @@ selected_status = st.sidebar.multiselect("Pilih Status Pesanan", orders_df["orde
 filtered_orders = orders_df[orders_df["order_status"].isin(selected_status)]
 
 # Main Dashboard
-st.title("📊 E-Commerce Orders Dashboard")
+st.title("📊 E-Commerce Public Dataset")
 
 # Order Status Distribution
 st.subheader("Distribusi Status Pesanan")
