@@ -5,7 +5,7 @@ import seaborn as sns
 
 # Load datasets
 customers_df = pd.read_csv("data/customers_dataset.csv")
-orders_df = pd.read_csv("orders_dataset.csv")
+orders_df = pd.read_csv("data/orders_dataset.csv")
 
 # Konversi kolom tanggal ke format datetime
 date_columns = [
