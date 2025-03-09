@@ -93,4 +93,4 @@ st.write("Strategi: Promosi dan diskon dapat diterapkan di bulan dengan penjuala
 st.subheader("2. Analisis Keterlambatan Pengiriman")
 delayed_orders = filtered_orders[filtered_orders["delay_time"] > 0]
 st.write(f"Total pesanan yang mengalami keterlambatan: {len(delayed_orders)}")
-st.write("Strategi: Optimalisasi rantai pasokan dan peningkatan efisiensi logistik dapat mengurangi keterlambatan pengiriman.")
+st.write("Strategi: Optimasi proses logistik dengan memilih rute pengiriman yang lebih efisien.")
